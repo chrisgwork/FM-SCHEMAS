@@ -5,8 +5,9 @@ USE film_manager;
 
 -- create table --------------------------------------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS film (
-	film_id   INT 	      NOT NULL,
-	full_name VARCHAR(50) NOT NULL,
+	film_id      INT 	     NOT NULL,
+	name         VARCHAR(50) NOT NULL,
+	code	     VARCHAR(20) NOT NULL,
 	release_date YEAR
 );
 
@@ -25,7 +26,7 @@ CREATE TABLE IF NOT EXISTS film_director_mapping (
 CREATE TABLE IF NOT EXISTS film_genre_mapping (
 	film_genre_mapping_id INT NOT NULL,
 	film_id               INT NOT NULL,
-	genre_id              INT NOT NULL
+	genre_sub_type_id     INT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS film_last_viewed (
@@ -44,7 +45,7 @@ CREATE TABLE IF NOT EXISTS film_owned_status_mapping (
 
 CREATE TABLE IF NOT EXISTS film_rating (
 	film_rating_id         INT           NOT NULL,
-	description	       VARCHAR(255),
+	description	           VARCHAR(255),
 	person_id              INT           NOT NULL,
 	film_rating_verdict_id INT           NOT NULL
 );
@@ -60,37 +61,40 @@ CREATE TABLE IF NOT EXISTS film_rating_mapping (
 -- statuses: ACTIVE, INACTIVE
 CREATE TABLE IF NOT EXISTS film_rating_status (
 	film_rating_status_id INT          NOT NULL,
-	code 		      VARCHAR(255) NOT NULL
+	code 		          VARCHAR(255) NOT NULL
 );
 
 -- verdicts: FAVOURITE, EXCELLENT, GOOD, OKAY, BLEH, BAD, DREADFUL, BAD_IT_GOOD
 CREATE TABLE IF NOT EXISTS film_rating_verdict (
-	film_rating_verdict_id INT         NOT NULL,
-	code 		       VARCHAR(20) NOT NULL
+	film_rating_verdict_id INT     NOT NULL,
+	code 		           VARCHAR(20) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS genre (
 	genre_id    INT            NOT NULL,
 	code	    VARCHAR(20)    NOT NULL,
+	name	    VARCHAR(50)    NOT NULL,
 	description VARCHAR(255)
 );
 
 CREATE TABLE IF NOT EXISTS genre_sub_type (
 	genre_sub_type_id  INT            NOT NULL,
 	code	           VARCHAR(20)    NOT NULL,
+	name	   	  	   VARCHAR(50)    NOT NULL,
 	description 	   VARCHAR(255),
-	genre_id  	   INT            NOT NULL
+	genre_id  	   	   INT            NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS house_hold (
 	house_hold_id INT         NOT NULL,
-	full_name     VARCHAR(20) NOT NULL
+	name     VARCHAR(20) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS person (
 	person_id  INT         NOT NULL,
 	last_name  VARCHAR(20) NOT NULL,
 	first_name VARCHAR(20) NOT NULL,
+	code	   VARCHAR(20) NOT NULL,
 	birth_date DATE
 );
 
@@ -147,7 +151,7 @@ ALTER TABLE film_actor_mapping        ADD CONSTRAINT fk_fam_person_id           
 ALTER TABLE film_director_mapping     ADD CONSTRAINT fk_fdm_person_id                  FOREIGN KEY (person_id)               REFERENCES person(person_id);
 ALTER TABLE film_director_mapping     ADD CONSTRAINT fk_fdm_film_id                    FOREIGN KEY (film_id)                 REFERENCES film(film_id);
 ALTER TABLE film_genre_mapping        ADD CONSTRAINT fk_fgm_film_id                    FOREIGN KEY (film_id)                 REFERENCES film(film_id);
-ALTER TABLE film_genre_mapping        ADD CONSTRAINT fk_fgm_genre_id                   FOREIGN KEY (genre_id)                REFERENCES genre(genre_id);
+ALTER TABLE film_genre_mapping        ADD CONSTRAINT fk_fgm_genre_sub_type_id          FOREIGN KEY (genre_sub_type_id)       REFERENCES genre_sub_type(genre_sub_type_id);
 ALTER TABLE film_last_viewed          ADD CONSTRAINT fk_flv_film_id                    FOREIGN KEY (film_id)                 REFERENCES film(film_id);
 ALTER TABLE film_last_viewed          ADD CONSTRAINT fk_flv_person_id                  FOREIGN KEY (person_id)               REFERENCES person(person_id);
 ALTER TABLE film_owned_status_mapping ADD CONSTRAINT fk_fosm_film_id                   FOREIGN KEY (film_id)                 REFERENCES film(film_id);
