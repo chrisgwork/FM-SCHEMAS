@@ -5,21 +5,21 @@ USE film_manager;
 
 -- create table --------------------------------------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS actor (
-	actor_id        INT         NOT NULL,
-	actor_full_name VARCHAR(50) NOT NULL,
-	birth_date DATETIME(6)
+	actor_id   INT         NOT NULL,
+	full_name  VARCHAR(50) NOT NULL,
+	birth_date DATE
 );
 
 CREATE TABLE IF NOT EXISTS director (
-	director_id 	   INT 	       NOT NULL,
-	director_full_name VARCHAR(50) NOT NULL,
-	birth_date DATETIME(6)
+	director_id INT 	    NOT NULL,
+	full_name   VARCHAR(50) NOT NULL,
+	birth_date  DATE
 );
 
 CREATE TABLE IF NOT EXISTS film (
 	film_id   INT 	      NOT NULL,
-	film_name VARCHAR(50) NOT NULL,
-	release_date DATETIME(6)
+	full_name VARCHAR(50) NOT NULL,
+	release_date YEAR
 );
 
 CREATE TABLE IF NOT EXISTS film_actor_mapping (
@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS film_owned_status_mapping (
 
 CREATE TABLE IF NOT EXISTS film_rating (
 	film_rating_id         INT           NOT NULL,
-	film_rating_comment    VARCHAR(255),
+	description			   VARCHAR(255),
 	reviewer_id            INT           NOT NULL,
 	film_rating_verdict_id INT           NOT NULL
 );
@@ -71,24 +71,32 @@ CREATE TABLE IF NOT EXISTS film_rating_mapping (
 
 -- statuses: ACTIVE, INACTIVE
 CREATE TABLE IF NOT EXISTS film_rating_status (
-	film_rating_status_id   INT          NOT NULL,
-	film_rating_status_code VARCHAR(255) NOT NULL
+	film_rating_status_id INT          NOT NULL,
+	code 		      VARCHAR(255) NOT NULL
 );
 
 -- verdicts: FAVOURITE, EXCELLENT, GOOD, OKAY, BLEH, BAD, DREADFUL, BAD_IT_GOOD
 CREATE TABLE IF NOT EXISTS film_rating_verdict (
-	film_rating_verdict_id   INT         NOT NULL,
-	film_rating_verdict_code VARCHAR(20) NOT NULL
+	film_rating_verdict_id INT         NOT NULL,
+	code 		       VARCHAR(20) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS genre (
-	genre_id   INT         NOT NULL,
-	genre_name VARCHAR(20) NOT NULL
+	genre_id  INT            NOT NULL,
+	code	  VARCHAR(20)    NOT NULL,
+	description VARCHAR(255)
+);
+
+CREATE TABLE IF NOT EXISTS genre_sub_type (
+	genre_sub_type_id  INT            NOT NULL,
+	code	  	       VARCHAR(20)    NOT NULL,
+	description 	   VARCHAR(255),
+	genre_id  		   INT            NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS house_hold (
-	house_hold_id   INT         NOT NULL,
-	house_hold_name VARCHAR(20) NOT NULL
+	house_hold_id INT         NOT NULL,
+	full_name     VARCHAR(20) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS rev_hous_memshp_mapp (
@@ -97,9 +105,9 @@ CREATE TABLE IF NOT EXISTS rev_hous_memshp_mapp (
 );
 
 CREATE TABLE IF NOT EXISTS reviewer (
-	reviewer_id        INT         NOT NULL,
-	reviewer_full_name VARCHAR(50) NOT NULL,
-	birth_date DATETIME(6)
+	reviewer_id INT         NOT NULL,
+	full_name   VARCHAR(50) NOT NULL,
+	birth_date  DATE
 );
 
 CREATE TABLE IF NOT EXISTS reviewer_house_membership (
@@ -122,6 +130,7 @@ ALTER TABLE film_rating_mapping        ADD CONSTRAINT pk_film_rating_mapping_id 
 ALTER TABLE film_rating_status         ADD CONSTRAINT pk_film_rating_status_id        PRIMARY KEY (film_rating_status_id);
 ALTER TABLE film_rating_verdict        ADD CONSTRAINT pk_film_rating_verdict_id       PRIMARY KEY (film_rating_verdict_id);
 ALTER TABLE genre                      ADD CONSTRAINT pk_genre_id                     PRIMARY KEY (genre_id);
+ALTER TABLE genre_sub_type             ADD CONSTRAINT pk_genre_sub_typ_id             PRIMARY KEY (genre_sub_type_id);
 ALTER TABLE house_hold                 ADD CONSTRAINT pk_house_hold_id                PRIMARY KEY (house_hold_id);
 ALTER TABLE rev_hous_memshp_mapp       ADD CONSTRAINT pk_rev_hous_memshp_mapp_id      PRIMARY KEY (rev_hous_memshp_mapp_id);
 ALTER TABLE reviewer                   ADD CONSTRAINT pk_reviewer_id                  PRIMARY KEY (reviewer_id);
@@ -141,6 +150,7 @@ ALTER TABLE film_rating_mapping        MODIFY film_rating_mapping_id       INT(1
 ALTER TABLE film_rating_status         MODIFY film_rating_status_id        INT(10) AUTO_INCREMENT;
 ALTER TABLE film_rating_verdict        MODIFY film_rating_verdict_id       INT(10) AUTO_INCREMENT;
 ALTER TABLE genre                      MODIFY genre_id                     INT(10) AUTO_INCREMENT;
+ALTER TABLE genre_sub_type             MODIFY genre_sub_type_id            INT(10) AUTO_INCREMENT;
 ALTER TABLE house_hold                 MODIFY house_hold_id                INT(10) AUTO_INCREMENT;
 ALTER TABLE rev_hous_memshp_mapp       MODIFY rev_hous_memshp_mapp_id      INT(10) AUTO_INCREMENT;
 ALTER TABLE reviewer                   MODIFY reviewer_id                  INT(10) AUTO_INCREMENT;
@@ -162,6 +172,7 @@ ALTER TABLE film_rating               ADD CONSTRAINT fk_fr_film_rating_verdict_i
 ALTER TABLE film_rating_mapping       ADD CONSTRAINT fk_frm_film_id                    FOREIGN KEY (film_id)                 REFERENCES film(film_id);
 ALTER TABLE film_rating_mapping       ADD CONSTRAINT fk_frm_film_rating_id             FOREIGN KEY (film_rating_id)          REFERENCES film_rating(film_rating_id);
 ALTER TABLE film_rating_mapping       ADD CONSTRAINT fk_frm_film_rating_status_id      FOREIGN KEY (film_rating_status_id)   REFERENCES film_rating_status(film_rating_status_id);
+ALTER TABLE genre_sub_type	     	  ADD CONSTRAINT fk_gst_genre_id        		   FOREIGN KEY (genre_id) 			     REFERENCES genre(genre_id);
 ALTER TABLE rev_hous_memshp_mapp      ADD CONSTRAINT fk_rhmm_house_hold_id             FOREIGN KEY (house_hold_id)           REFERENCES house_hold(house_hold_id);
 ALTER TABLE reviewer_house_membership ADD CONSTRAINT fk_rhm_rev_hous_memshp_mapp_id    FOREIGN KEY (rev_hous_memshp_mapp_id) REFERENCES rev_hous_memshp_mapp(rev_hous_memshp_mapp_id);
 ALTER TABLE reviewer_house_membership ADD CONSTRAINT fk_rhm_reviewer_id                FOREIGN KEY (reviewer_id)      	     REFERENCES reviewer(reviewer_id);
